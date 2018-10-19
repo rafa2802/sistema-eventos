@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from .models import Evento, Atividade, Palestrante
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import AddAtividadeForm
 
 class HomeView(LoginRequiredMixin, View):
     def get(self, request):
@@ -27,12 +26,6 @@ class EventoAdmin(View):
         evento = Evento.objects.filter(id=pk).first()
         palestrantes = Palestrante.objects.all()
         return render(request, 'evento/detalhes_adm.html', {'evento': evento, 'palestrantes': palestrantes})
-
-    def post(self, request, pk):
-        print(request.POST)
-        if request.form is valid:
-            form.save()
-            return redirect('evento:detalhes-evento-adm', pk = pk)
 
 class AddPalestrante(View):
     def post(self, request, pk):
@@ -152,5 +145,3 @@ class Cancelar(View):
         atividade.inscritos.remove(self.request.user)
         atividade.save()
         return redirect('evento:detalhes-atividade', pk = pk)
-
-
