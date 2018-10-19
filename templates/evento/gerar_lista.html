@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+{% load static %}
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Sistema de Eventos - starAdmin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="/static/vendors/iconfonts/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="/static/assets/vendors/iconfonts/puse-icons-feather/feather.css">
+  <link rel="stylesheet" href="/static/vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="/static/vendors/css/vendor.bundle.addons.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/profile.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="/static/images/favicon.ico" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+
+</head>
+<body>
+    <div style="text-align: center; margin-top: 3%;">
+        <h4>Lista dos Inscritos {% if atividade.tipo == 0 %} na Palestra {% else %} no Minicurso {% endif %}</h4>
+        <h3>{{atividade.nome}}</h3>
+    </div>
+    <hr>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nome</th>
+          <th scope="col">CPF</th>
+          <th scope="col">Telefone</th>
+          <th scope="col">E-mail</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for inscrito in atividade.inscritos.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{inscrito.first_name}} {{inscrito.last_name}}</td>
+          <td>{{inscrito.cpf}}</td>
+          <td>{{inscrito.phone}}</td>
+          <td>{{inscrito.email}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,202 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div style="text-align: center;">
+        <h3>{{atividade.nome}}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div style="float: left;">
+        {% if request.user.is_staff %}
+        <button style="margin-top: 14.5%;" class="btn btn-success btn-block" data-toggle="modal" data-target="#editarModal">Editar {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}
+          <i class="mdi mdi-pencil"></i>
+        </button>
+
+        <button style="margin-top: 13%;" class="btn btn-danger btn-block" data-toggle="modal" data-target="#excluirModal">Excluir {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        {% else %}
+        {% if request.user in atividade.inscritos.all %}
+        <button style="margin-top: 13%;" class="btn btn-danger btn-block" data-toggle="modal" data-target="#cancelarModal">Cancelar inscrição em {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}
+          <i class="fas fa-times"></i>
+        {% else %}
+        <button style="margin-top: 13%;" class="btn btn-primary btn-block" data-toggle="modal" data-target="#inscreverModal">Inscrever-se em {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}
+        </button>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div style="float: right; margin-top: 5%;">
+        <p>Data{% if atividade.tipo == 0 %} da Palestra {% else %} do Minicurso{% endif %}: {{atividade.data}}</p>
+        <p>Hora{% if atividade.tipo == 0 %} da Palestra {% else %} do Minicurso{% endif %}: {{atividade.hora}}</p>
+        <p>Duração{% if atividade.tipo == 0 %} da Palestra {% else %} do Minicurso{% endif %}: {{atividade.duracao}}</p>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+<div class="row">
+  <div class="col-md-12">
+    {% if request.user.is_staff %}
+    <div style="text-align: center; margin-top: 3%;">
+      <h4>Inscritos</h4>
+    </div>
+
+    <div style="float: right;">
+      <a href="{% url 'evento:gerar-lista' atividade.pk %}" class="btn btn-primary btn-block" target="_blank">Gerar Lista <i class="fas fa-clipboard-list"></i></a>
+    </div>
+    {% if atividade.inscritos.all|length == 0 %}
+    <div style="text-align: center; margin-top: 4%;">
+      <h3>Nenhuma inscrição até o momento</h3>
+    </div>
+    {% else %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nome</th>
+          <th scope="col">CPF</th>
+          <th scope="col">Telefone</th>
+          <th scope="col">E-mail</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for inscrito in atividade.inscritos.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{inscrito.first_name}} {{inscrito.last_name}}</td>
+          <td>{{inscrito.cpf}}</td>
+          <td>{{inscrito.phone}}</td>
+          <td>{{inscrito.email}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <hr>
+    {% else %}
+    {% endif %}
+  </div>
+</div>
+</div>
+
+<!-- Modal Excluir-->
+<div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Editar {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:excluir-atividade' atividade.pk %}">
+          {% csrf_token %}
+          <div class="alert alert-danger" role="alert">
+            Deseja realmente excluir {% if atividade.tipo == 0 %} essa palestra{% else %} esse minicurso{% endif %}?
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+        <button type="submit" class="btn btn-success">Sim, tenho certeza</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar-->
+<div class="modal fade" id="editarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Editar {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:editar-atividade' atividade.pk %}">
+          {% csrf_token %}
+            <div class="form-group">
+            <label for="palestrante">Palestrante</label>
+            <select class="form-control" id="palestrante" name="palestrante">
+              <option value="{{atividade.palestrante.pk}}">{{atividade.palestrante.nome}}</option>
+             {% for palestrante in palestrantes %}
+                {% if palestrante == atividade.palestrante %}
+                {% else %}
+              <option value="{{palestrante.pk}}">{{palestrante.nome}}</option>
+                {% endif %}}
+             {% endfor %}
+            </select>
+          </div>
+            <div class="form-group">
+                <label for="nome">Nome da Atividade</label>
+                <input type="text" id="nome" name="nome" class="form-control" required value="{{atividade.nome}}">
+            </div>
+            <div class="form-group">
+                <label for="duracao">Duração da Atividade</label>
+                <input type="time" id="duracao" name="duracao" class="form-control" required value="{{atividade.duracao}}">
+            </div>
+            <div class="form-group">
+                <label for="hora">Horário da Atividade</label>
+                <input type="time" id="hora" name="hora" class="form-control" required value="{{atividade.hora}}">
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Salvar</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Inscrever-->
+<div class="modal fade" id="inscreverModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Inscrever-se em {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:inscrever' atividade.pk %}">
+          {% csrf_token %}
+          <div class="alert alert-info" role="alert">
+            Deseja realmente continuar sua inscrição {% if atividade.tipo == 0 %} nessa palestra{% else %} nesse minicurso{% endif %}?
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+        <button type="submit" class="btn btn-success">Sim, desejo</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cancelar-->
+<div class="modal fade" id="cancelarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Cancelar inscrição em {% if atividade.tipo == 0 %} Palestra {% else %} Minicurso {% endif %}</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:cancelar' atividade.pk %}">
+          {% csrf_token %}
+          <div class="alert alert-danger" role="alert">
+            Deseja realmente cancelar sua inscrição {% if atividade.tipo == 0 %} nessa palestra{% else %} nesse minicurso{% endif %}?
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+        <button type="submit" class="btn btn-success">Sim, tenho certeza</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

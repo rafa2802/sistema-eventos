@@ -1,0 +1,15 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success" role="alert">
+              Uhu! Você acaba de criar um evento incrível. Comece adicionando palestras e minicursos ao seu evento! <a href="{% url 'evento:evento-detalhe-adm' evento.pk %}">Clique aqui para acessar a página do seu evento.</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

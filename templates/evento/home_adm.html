@@ -1,0 +1,44 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-xl-12">
+            <div style="text-align: center;">
+                <h3>Meus Eventos</h3>
+            </div>
+            {% if eventos_adm|length == 0 %}
+            <div style="text-align: center; margin-top: 10%;">
+                <h2>Você não criou eventos até o momento</h2>
+            </div>
+            {% else %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Nome do Evento</th>
+                  <th scope="col">Quantidade de Palestras</th>
+                  <th scope="col">Quantidade de Minicursos</th>
+                  <th scope="col">Data de Criação</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for evento in eventos_adm %}
+                <tr>
+                  <th scope="row">{{forloop.counter}}</th>
+                  <td><a href="{% url 'evento:evento-detalhe-adm' evento.pk %}">{{evento.nome}}</a></td>
+                  <td>{{evento.palestras.all|length}}</td>
+                  <td>{{evento.minicursos.all|length}}</td>
+                  <td>{{evento.criado|date}}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

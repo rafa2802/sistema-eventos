@@ -1,0 +1,239 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div style="text-align: center;">
+        <h3>{{evento.nome}}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div style="float: left;">
+        <button style="margin-top: 10%;" class="btn btn-success btn-block" data-toggle="modal" data-target="#atividadeModal">Adicionar Atividade
+          <i class="mdi mdi-plus"></i>
+        </button>
+
+        <button style="margin-top: 10%;" class="btn btn-success btn-block" data-toggle="modal" data-target="#palestranteModal">Adicionar Palestrante
+          <i class="mdi mdi-plus"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div style="float: left;">
+        <button style="margin-top: 14.5%;" class="btn btn-success btn-block" data-toggle="modal" data-target="#editarModal">Editar Evento
+          <i class="mdi mdi-pencil"></i>
+        </button>
+
+        <button style="margin-top: 13%;" class="btn btn-danger btn-block" data-toggle="modal" data-target="#excluirModal">Excluir Evento
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div style="float: right; margin-top: 10%;">
+        <p>Data e hora da criação: {{evento.criado}}</p>
+      </div>
+    </div>
+  </div>
+  <hr>
+<div class="row">
+  <div class="col-md-12">
+    <div style="text-align: center; margin-top: 3%;">
+      <h4>Palestras</h4>
+    </div>
+    {% if evento.palestras.all|length == 0 %}
+    <div style="text-align: center; margin-top: 4%;">
+      <h3>Nenhuma palestra cadastrada</h3>
+    </div>
+    {% else %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Palestrante</th>
+          <th scope="col">Nome da Palestra</th>
+          <th scope="col">Data e Horário</th>
+          <th scope="col">Duração</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for palestra in evento.palestras.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{palestra.palestrante.nome}}</td>
+          <td><a href="{% url 'evento:detalhes-atividade' palestra.pk %}">{{palestra.nome}}</a></td>
+          <td>{{palestra.data}} às {{palestra.hora}}</td>
+          <td>{{palestra.duracao}}h</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-md-12">
+    <div style="text-align: center; margin-top: 3%;">
+      <h4>Minicursos</h4>
+    </div>
+    {% if evento.minicursos.all|length == 0 %}
+    <div style="text-align: center; margin-top: 4%;">
+      <h3>Nenhum minicurso cadastrado</h3>
+    </div>
+    {% else %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Palestrante</th>
+          <th scope="col">Nome do Minicurso</th>
+          <th scope="col">Data e Horário</th>
+          <th scope="col">Duração</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for minicurso in evento.minicursos.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{minicurso.palestrante.nome}}</td>
+          <td><a href="{% url 'evento:detalhes-atividade' minicurso.pk %}">{{minicurso.nome}}</a></td>
+          <td>{{minicurso.data}} às {{minicurso.hora}}</td>
+          <td>{{minicurso.duracao}}h</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+<hr>
+</div>
+
+<!-- Modal Atividade-->
+<div class="modal fade" id="atividadeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Adicionar Atividade</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:add-atividade' evento.pk %}">
+          {% csrf_token %}
+            <div class="form-group">
+            <label for="palestrante">Palestrante</label>
+            <select class="form-control" id="palestrante" name="palestrante">
+             {% for palestrante in palestrantes %}
+              <option value="{{palestrante.pk}}">{{palestrante.nome}}</option>
+             {% endfor %}
+            </select>
+          </div>
+            <div class="form-group">
+                <label for="nome">Nome da Atividade</label>
+                <input type="text" id="nome" name="nome" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="duracao">Duração da Atividade</label>
+                <input type="time" id="duracao" name="duracao" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="data">Data da Atividade</label>
+                <input type="date" id="data" name="data" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="hora">Horário da Atividade</label>
+                <input type="time" id="hora" name="hora" class="form-control" required>
+            </div>
+            <div class="form-group">
+            <label for="tipo">Tipo de Atividade</label>
+            <select class="form-control" id="tipo" name="tipo">
+              <option value="0">Palestra</option>
+              <option value="1">Minicurso</option>
+            </select>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Criar</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Palestrante-->
+<div class="modal fade" id="palestranteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Adicionar Palestrante</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:add-palestrante' evento.pk %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="nome">Nome do Palestrante</label>
+            <input type="text" class="form-control" id="nome" aria-describedby="nomeHelp" placeholder="Arthur Guedes" name="nome">
+            <small id="nomeHelp" class="form-text text-muted">Informe o nome do palestrante</small>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Adicionar</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Excluir-->
+<div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Editar Evento</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:excluir-evento' evento.pk %}">
+          {% csrf_token %}
+          <div class="alert alert-danger" role="alert">
+            Deseja realmente excluir esse evento?
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+        <button type="submit" class="btn btn-success">Sim, tenho certeza</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar-->
+<div class="modal fade" id="editarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Editar Evento</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'evento:editar-evento' evento.pk %}">
+          {% csrf_token %}
+            <div class="form-group">
+                <label for="nome">Nome do Evento</label>
+                <input type="text" id="nome" name="nome" class="form-control" required value="{{evento.nome}}">
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Salvar</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

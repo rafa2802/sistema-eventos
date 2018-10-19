@@ -1,0 +1,41 @@
+{% extends './base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-xl-12">
+            {% if eventos|length == 0 %}
+            <div style="text-align: center; margin-top: 10%;">
+                <h2>Nenhum evento disponível</h2>
+            </div>
+            {% else %}
+            <div style="text-align: center;">
+                <h3>Eventos Disponíveis</h3>
+            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Organizador</th>
+                  <th scope="col">Nome do Evento</th>
+                  <th scope="col">Quantidade de Palestras</th>
+                  <th scope="col">Quantidade de Minicursos</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for evento in eventos %}
+                <tr>
+                  <th scope="row">{{forloop.counter}}</th>
+                  <td>{{evento.dono.username}}</td>
+                  <td><a href="{% url 'evento:evento-detalhe' evento.pk %}">{{evento.nome}}</a></td>
+                  <td>{{evento.palestras.all|length}}</td>
+                  <td>{{evento.minicursos.all|length}}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

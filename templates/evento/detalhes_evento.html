@@ -1,0 +1,94 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div style="text-align: center;">
+        <h3>{{evento.nome}}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div style="float: right; margin-top: 3%;">
+        <p>Data e hora da criação: {{evento.criado}}</p>
+      </div>
+    </div>
+  </div>
+  <hr>
+<div class="row">
+  <div class="col-md-12">
+    <div style="text-align: center; margin-top: 3%;">
+      <h4>Palestras</h4>
+    </div>
+    {% if evento.palestras.all|length == 0 %}
+    <div style="text-align: center; margin-top: 4%;">
+      <h3>Nenhuma palestra cadastrada</h3>
+    </div>
+    {% else %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Palestrante</th>
+          <th scope="col">Nome da Palestra</th>
+          <th scope="col">Data e Horário</th>
+          <th scope="col">Duração</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for palestra in evento.palestras.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{palestra.palestrante.nome}}</td>
+          <td><a href="{% url 'evento:detalhes-atividade' palestra.pk %}">{{palestra.nome}}</a></td>
+          <td>{{palestra.data}} às {{palestra.hora}}</td>
+          <td>{{palestra.duracao}}h</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-md-12">
+    <div style="text-align: center; margin-top: 3%;">
+      <h4>Minicursos</h4>
+    </div>
+    {% if evento.minicursos.all|length == 0 %}
+    <div style="text-align: center; margin-top: 4%;">
+      <h3>Nenhum minicurso cadastrado</h3>
+    </div>
+    {% else %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Palestrante</th>
+          <th scope="col">Nome do Minicurso</th>
+          <th scope="col">Data e Horário</th>
+          <th scope="col">Duração</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for minicurso in evento.minicursos.all %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{minicurso.palestrante.nome}}</td>
+          <td><a href="{% url 'evento:detalhes-atividade' minicurso.pk %}">{{minicurso.nome}}</a></td>
+          <td>{{minicurso.data}} às {{minicurso.hora}}</td>
+          <td>{{minicurso.duracao}}h</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+<hr>
+</div>
+{% endblock %}
